@@ -14,7 +14,7 @@ detection_zones = [DetectionZone(
 
 
 def overlap_event(zone1, zone2):
-    print(f'zone: {zone1} overlaps with {zone2}')
+    print(f'{zone1} overlaps with {zone2}')
 
 
 if __name__ == "__main__":

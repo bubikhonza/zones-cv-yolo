@@ -8,3 +8,6 @@ class PredictedZone(AbstractZone):
         self.prob = prob
         self.cls = cls
         self.tracking_id = tracking_id
+
+    def __repr__(self) -> str:
+        return f"PredictedZone-> cls: {self.cls}, id: {self.tracking_id}, prob: {self.prob}"
