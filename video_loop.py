@@ -9,6 +9,7 @@ class VideoLoop:
     def __init__(self, source: Any):
         self.__vid = cv2.VideoCapture(source)
         self.__tracker = SortTracker()
+        self.__overlapped_track_ids = []
 
     def __frame_to_bytes(self, frame):
         ret, buffer = cv2.imencode('.jpg', cv2.flip(frame, 1))
@@ -16,7 +17,8 @@ class VideoLoop:
         return (b'--frame\r\n'
                 b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
-    def start(self, detection_zones: list, detection_cls_list: list, model: YOLO, overlap_callback: Any, draw_predicted: bool = True, draw_detection_zones: bool = True):
+    def start(self, detection_zones: list, detection_cls_list: list, model: YOLO, overlap_callback: Any, draw_predicted: bool = True, draw_detection_zones: bool = True, distinct_only_overlap: bool = False):
+        #TODO refactor this mess
         while (True):
             _, frame = self.__vid.read()
             cv2.waitKey(1)
@@ -33,6 +35,12 @@ class VideoLoop:
                         zone.draw(frame)
 
                     if zone.overlaps(predicted) and predicted.cls in detection_cls_list:
-                        overlap_callback(zone, predicted)
+                        if distinct_only_overlap:
+                            if not predicted.tracking_id in self.__overlapped_track_ids:
+                                overlap_callback(zone, predicted)
+                                self.__overlapped_track_ids.append(
+                                    predicted.tracking_id)
+                        else:
+                            overlap_callback(zone, predicted)
 
             yield self.__frame_to_bytes(frame)
