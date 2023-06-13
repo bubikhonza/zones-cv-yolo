@@ -11,6 +11,7 @@ class AbstractZone:
         self.rect = x1, y1, x2, y2
 
     def overlaps(self, other: 'AbstractZone') -> bool:
+        # TODO: solve overlapping without corners
         pt1 = other.x1, other.y1
         pt2 = other.x1, other.y2
         pt3 = other.x2, other.y1
